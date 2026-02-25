@@ -13,5 +13,7 @@ __pycache__/
 # OS / Editor
 .vscode/
 
-data/raw/
-data/bronze/
+# Ignore ONLY raw sensitive data
+data/raw/*
+!data/raw/.gitkeep
+
