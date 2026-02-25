@@ -1,231 +1,106 @@
 # Hospitality Data Platform
 
 A modular Data Engineering project implementing a Medallion Architecture
-for OTA (Online Travel Agency) booking analytics.
+for hospitality booking and review analytics.
 
-This project simulates a production-ready data platform for hotel booking data,
+This project simulates a production-ready data backbone for OTA data,
 covering ingestion, transformation, validation, aggregation, and orchestration.
-
----
-
-# Project Overview
-
-The platform processes booking data from multiple OTA sources:
-
-- Booking.com
-- Expedia
-
-It standardizes schemas, applies business rules, validates data integrity,
-and produces aggregated KPIs for revenue and performance monitoring.
-
-Architecture follows the Medallion pattern:
-
-Raw → Bronze → Silver → Gold
 
 ---
 
 # Architecture
 
-## Raw Layer
-- Original source data
-- Immutable input
-- Not version-controlled (sensitive data)
+Raw → Bronze → Silver → Gold
 
-## Bronze Layer
-- Light cleaning
-- Anonymization
-- Standardized structure
-- Preserves original semantics
+Designed to:
 
-## Silver Layer
-- Unified schema across OTAs
-- Strong typing (datetime, float, string)
-- Status normalization
-- Automatic correction of inverted dates
-- Data quality validation
-
-Final Silver schema:
-
-- booking_date (datetime)
-- check_in (datetime)
-- check_out (datetime)
-- price (float)
-- status (OK / Cancelled)
-- booker_country (nullable)
-- cancelling_date (nullable)
-- source (booking / expedia)
-
-## Gold Layer
-Aggregated business metrics:
-
-- total_bookings
-- total_revenue
-- cancelled_bookings
-- cancellation_rate_percent
-- avg_booking_value
-- revenue_by_source
+- Unify heterogeneous OTA data
+- Normalize business logic
+- Enforce data quality
+- Deliver analytics-ready KPIs
 
 ---
 
-# Folder Structure
+# Data Domains
 
-hospitality-data-platform/
-│
-├── data/
-│   ├── raw/
-│   ├── bronze/
-│   ├── silver/
-│   └── gold/
-│
-├── transformations/
-│   ├── staging/
-│   │   └── stg_bookings.py
-│   └── marts/
-│       └── kpi_bookings.py
-│
-├── quality/
-│   ├── bronze_checks.py
-│   └── silver_checks.py
-│
-├── orchestration/
-│   └── run_pipeline.py
-│
-├── analytics/
-│   └── sql/
-│
-├── docs/
-│   ├── architecture.md
-│   ├── data_model.md
-│   ├── business_use_cases.md
-│   └── pipeline_flow.md
-│
-├── scripts/
-│   └── anonymization/
-│
-└── README.md
+## Bookings
+- Revenue metrics
+- Cancellation analysis
+- Channel comparison
+- Booking value analysis
+
+## Reviews
+- Reputation monitoring
+- Rating normalization
+- Channel rating comparison
+- Review volume trends
 
 ---
 
-# Data Flow
+# Pipeline
 
-1. Raw ingestion
-2. Bronze transformation
-3. Silver standardization
-4. Silver quality checks
-5. Gold KPI generation
-6. Orchestration via run_pipeline.py
+Central orchestration:
 
----
+orchestration/run_pipeline.py
 
-# Business Logic
+Executes full rebuild:
 
-## Status Normalization
-
-Booking:
-- ok → OK
-- inhouse → OK
-- cancelled_by_guest → Cancelled
-- cancelled_by_hotel → Cancelled
-- no_show → Cancelled
-
-Expedia:
-- postStay → OK
-- cancelled → Cancelled
+1. Silver bookings
+2. Silver reviews
+3. Quality validation
+4. Gold booking KPIs
+5. Gold review KPIs
 
 ---
 
-## Automatic Data Corrections
+# Engineering Highlights
 
-To ensure data consistency:
-
-- Inverted dates are automatically swapped (check_out < check_in)
-- Missing booking_date for confirmed bookings is filled using check_in
-
-These corrections prevent pipeline failure while maintaining data integrity.
-
----
-
-# Data Quality Validation
-
-Silver checks validate:
-
-- booking_date not null for active bookings
-- check_out >= check_in
-- Valid status values only (OK / Cancelled)
-
-Pipeline fails if validations fail.
+- Multi-source schema unification
+- Rating normalization (text → numeric)
+- Defensive data engineering
+- Structured modular transformations
+- Deterministic pipeline execution
+- Medallion architecture implementation
 
 ---
 
-# KPIs Produced
+# Output KPIs
 
-Example metrics:
+## Revenue
+- Total revenue
+- Average booking value
+- Cancellation rate
+- Revenue by source
 
-- Total Bookings
-- Total Revenue
-- Cancelled Bookings
-- Cancellation Rate
-- Average Booking Value
-- Revenue by Source
-
----
-
-# How to Run
-
-Create virtual environment (if needed):
-
-python -m venv .venv
-
-Activate environment:
-
-source .venv/bin/activate
-
-Install dependency:
-
-pip install pandas
-
-Run full pipeline:
-
-.venv/bin/python orchestration/run_pipeline.py
+## Reputation
+- Average rating
+- Rating by source
+- Monthly review volume
+- Review count by source
 
 ---
 
-# Technologies Used
+# Technologies
 
 - Python
 - Pandas
-- Modular Architecture
-- Medallion Pattern
-- Data Validation Logic
+- Modular ETL architecture
+- Layered data modeling
 
 ---
 
-# Engineering Concepts Demonstrated
+# Strategic Positioning
 
-- Schema unification across heterogeneous sources
-- Business rule normalization
-- Automated data validation
-- Modular transformation design
-- Layered architecture (Raw → Bronze → Silver → Gold)
-- Centralized orchestration
-- Defensive data engineering
+This project serves as:
 
----
-
-# Future Improvements
-
-- Incremental data loading
-- Docker containerization
-- Structured logging
-- Unit testing with pytest
-- Cloud deployment (AWS / Azure)
-- Dashboard layer (Power BI / Tableau)
-- Automated quality reporting
+- Hospitality data backbone
+- Foundation for revenue optimization engines
+- Base layer for advanced analytics systems
 
 ---
 
 # Author
 
-Francisco Cunha  
-Data Engineering Track  
+Fracisco Cunha
+Data Engineering Portfolio Project  
 Hospitality Analytics & Revenue Intelligence

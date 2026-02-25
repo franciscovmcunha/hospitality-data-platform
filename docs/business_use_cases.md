@@ -1,30 +1,41 @@
 # Business Use Cases
 
-## 1. Revenue Monitoring
+## Revenue Intelligence
 
-Track total revenue across Booking.com and Expedia.
-Identify top performing channel.
+The platform enables:
 
-## 2. Cancellation Optimization
+- Channel revenue comparison
+- Cancellation rate monitoring
+- Average booking value tracking
+- Monthly revenue trends
 
-Measure cancellation rate.
-Identify patterns in cancellation behavior.
-Support revenue recovery strategies.
+Supports:
+- Revenue management strategy
+- OTA negotiation
+- Pricing optimization
 
-## 3. Channel Performance Comparison
+---
 
-Compare:
-- Total revenue
-- Average booking value
-- Cancellation rate
+## Reputation Intelligence
 
-Helps revenue managers decide:
-- Allocation strategy
-- Pricing adjustments
-- Channel investment
+The platform enables:
 
-## 4. Market Insights
+- Average rating monitoring
+- Rating by OTA source
+- Review volume trend analysis
+- Reputation benchmarking
 
-Using booker_country:
-- Identify top source markets
-- Evaluate international demand distribution
+Supports:
+- Service improvement strategy
+- Brand perception monitoring
+- Operational performance analysis
+
+---
+
+## Strategic Value
+
+This platform acts as:
+
+- Centralized hospitality data backbone
+- Foundation for revenue optimization engines
+- Base layer for advanced analytics projects

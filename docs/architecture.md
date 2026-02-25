@@ -1,51 +1,110 @@
-# Architecture Overview
+# Architecture
 
-## Medallion Architecture
+## Overview
 
-This project follows the Medallion Architecture pattern:
+The Hospitality Data Platform follows a Medallion Architecture pattern:
 
 Raw → Bronze → Silver → Gold
 
-### Raw Layer
-- Contains original source data (Booking.com and Expedia)
-- Not versioned (sensitive data)
-- Acts as immutable input
+This layered structure ensures separation of concerns, data reliability, and scalability.
 
-### Bronze Layer
-- Basic cleaning and anonymization
-- Preserves original structure
-- Standardizes column names where needed
-- Light data normalization
+---
 
-### Silver Layer
-- Unified schema across sources
-- Strong typing (datetime, float, string)
-- Business rule normalization (status mapping)
-- Automatic correction of inverted dates
-- Data quality validations
+## Raw Layer
 
-Final Silver schema:
+Purpose:
+- Immutable source data
+- No transformation applied
+- Acts as system of record
 
-- booking_date (datetime)
-- check_in (datetime)
-- check_out (datetime)
-- price (float)
-- status (OK / Cancelled)
-- booker_country (string, nullable)
-- cancelling_date (datetime, nullable)
-- source (booking / expedia)
+Contains:
+- OTA exports (Booking, Expedia)
+- Original review data
 
-### Gold Layer
-- Aggregated KPIs
-- Revenue metrics
-- Cancellation metrics
-- Channel comparison metrics
+---
 
-## Data Flow
+## Bronze Layer
 
-1. Raw data ingested
-2. Bronze transformation
-3. Silver standardization
-4. Quality checks
-5. Gold KPI generation
-6. Orchestration via run_pipeline.py
+Purpose:
+- Light cleaning
+- Structural standardization
+- Anonymization
+- Preserve original business meaning
+
+Characteristics:
+- Minimal transformation
+- Column normalization
+- Hashing of personal identifiers
+
+---
+
+## Silver Layer
+
+Purpose:
+- Schema unification across sources
+- Type enforcement (datetime, float, string)
+- Business rule normalization
+- Quality validation
+
+Includes:
+
+### Bookings
+- Unified status (OK / Cancelled)
+- Price normalization
+- Automatic date corrections
+- Source tagging
+
+### Reviews
+- Unified rating scale (0–10 float)
+- Unified review schema
+- Multilingual text preserved
+- Source normalization
+
+---
+
+## Gold Layer
+
+Purpose:
+- Business-ready aggregated metrics
+- Revenue intelligence
+- Reputation intelligence
+
+Includes:
+
+### Booking KPIs
+- Total revenue
+- Cancellation rate
+- Average booking value
+- Revenue by source
+
+### Review KPIs
+- Total reviews
+- Average rating
+- Rating by source
+- Monthly review volume
+
+---
+
+## Orchestration
+
+Centralized pipeline execution:
+
+orchestration/run_pipeline.py
+
+Executes:
+
+1. Silver bookings
+2. Silver reviews
+3. Silver quality checks
+4. Gold booking KPIs
+5. Gold review KPIs
+
+---
+
+## Design Principles
+
+- Modularity
+- Deterministic transformations
+- Explicit business logic
+- Reproducibility
+- Analytics-ready output
