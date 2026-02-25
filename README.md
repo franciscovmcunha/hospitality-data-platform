@@ -1,118 +1,231 @@
 # Hospitality Data Platform
 
-End-to-end Data Engineering project implementing a Medallion Architecture (Bronze / Silver / Gold) for hospitality booking and review data.
+A modular Data Engineering project implementing a Medallion Architecture
+for OTA (Online Travel Agency) booking analytics.
 
-This project simulates a real-world data platform ingesting data from multiple OTA sources (Booking & Expedia), anonymizing sensitive fields, standardizing schemas, and preparing business-ready datasets.
+This project simulates a production-ready data platform for hotel booking data,
+covering ingestion, transformation, validation, aggregation, and orchestration.
 
 ---
 
-## Architecture
+# Project Overview
 
-This project follows the Medallion Architecture pattern:
+The platform processes booking data from multiple OTA sources:
+
+- Booking.com
+- Expedia
+
+It standardizes schemas, applies business rules, validates data integrity,
+and produces aggregated KPIs for revenue and performance monitoring.
+
+Architecture follows the Medallion pattern:
 
 Raw → Bronze → Silver → Gold
 
-### Raw
-- Original source files
-- Not versioned (sensitive data)
-- Stored locally only
+---
 
-### Bronze
-- Cleaned and anonymized datasets
-- Standardized date formats
-- Personally identifiable information hashed (SHA-256)
+# Architecture
 
-### Silver (In Progress)
-- Unified schema across sources
-- Structured and validated datasets
-- Ready for transformation
+## Raw Layer
+- Original source data
+- Immutable input
+- Not version-controlled (sensitive data)
 
-### Gold (Planned)
-- Business-level aggregated metrics
-- Revenue KPIs
-- Booking & review performance indicators
+## Bronze Layer
+- Light cleaning
+- Anonymization
+- Standardized structure
+- Preserves original semantics
+
+## Silver Layer
+- Unified schema across OTAs
+- Strong typing (datetime, float, string)
+- Status normalization
+- Automatic correction of inverted dates
+- Data quality validation
+
+Final Silver schema:
+
+- booking_date (datetime)
+- check_in (datetime)
+- check_out (datetime)
+- price (float)
+- status (OK / Cancelled)
+- booker_country (nullable)
+- cancelling_date (nullable)
+- source (booking / expedia)
+
+## Gold Layer
+Aggregated business metrics:
+
+- total_bookings
+- total_revenue
+- cancelled_bookings
+- cancellation_rate_percent
+- avg_booking_value
+- revenue_by_source
 
 ---
 
-## Project Structure
+# Folder Structure
 
 hospitality-data-platform/
-
-data/
-- raw/
-- bronze/
-- silver/
-- gold/
-
-scripts/
-- anonymization/
-
-transformations/
-- staging/
-- marts/
-
-quality/
-ingestion/
-orchestration/
-docs/
+│
+├── data/
+│   ├── raw/
+│   ├── bronze/
+│   ├── silver/
+│   └── gold/
+│
+├── transformations/
+│   ├── staging/
+│   │   └── stg_bookings.py
+│   └── marts/
+│       └── kpi_bookings.py
+│
+├── quality/
+│   ├── bronze_checks.py
+│   └── silver_checks.py
+│
+├── orchestration/
+│   └── run_pipeline.py
+│
+├── analytics/
+│   └── sql/
+│
+├── docs/
+│   ├── architecture.md
+│   ├── data_model.md
+│   ├── business_use_cases.md
+│   └── pipeline_flow.md
+│
+├── scripts/
+│   └── anonymization/
+│
+└── README.md
 
 ---
 
-## Data Privacy
+# Data Flow
 
-All personally identifiable information (PII) such as:
-
-- Guest names  
-- Reservation IDs  
-- Confirmation numbers  
-- Review author names  
-
-is hashed before being stored in the Bronze layer.
-
-Raw sensitive data is never versioned in Git.
+1. Raw ingestion
+2. Bronze transformation
+3. Silver standardization
+4. Silver quality checks
+5. Gold KPI generation
+6. Orchestration via run_pipeline.py
 
 ---
 
-## Tech Stack
+# Business Logic
+
+## Status Normalization
+
+Booking:
+- ok → OK
+- inhouse → OK
+- cancelled_by_guest → Cancelled
+- cancelled_by_hotel → Cancelled
+- no_show → Cancelled
+
+Expedia:
+- postStay → OK
+- cancelled → Cancelled
+
+---
+
+## Automatic Data Corrections
+
+To ensure data consistency:
+
+- Inverted dates are automatically swapped (check_out < check_in)
+- Missing booking_date for confirmed bookings is filled using check_in
+
+These corrections prevent pipeline failure while maintaining data integrity.
+
+---
+
+# Data Quality Validation
+
+Silver checks validate:
+
+- booking_date not null for active bookings
+- check_out >= check_in
+- Valid status values only (OK / Cancelled)
+
+Pipeline fails if validations fail.
+
+---
+
+# KPIs Produced
+
+Example metrics:
+
+- Total Bookings
+- Total Revenue
+- Cancelled Bookings
+- Cancellation Rate
+- Average Booking Value
+- Revenue by Source
+
+---
+
+# How to Run
+
+Create virtual environment (if needed):
+
+python -m venv .venv
+
+Activate environment:
+
+source .venv/bin/activate
+
+Install dependency:
+
+pip install pandas
+
+Run full pipeline:
+
+.venv/bin/python orchestration/run_pipeline.py
+
+---
+
+# Technologies Used
 
 - Python
 - Pandas
-- Git
-- CSV ingestion
-- Hash-based anonymization
-- Medallion Architecture
-
-Planned:
-- SQL (DuckDB / SQLite)
-- Data Quality validation
-- Orchestration layer
-- BI layer
+- Modular Architecture
+- Medallion Pattern
+- Data Validation Logic
 
 ---
 
-## How to Run
+# Engineering Concepts Demonstrated
 
-1. Place raw CSV files inside data/raw/
-2. Run:
-
-python scripts/anonymization/anonymize_booking.py  
-python scripts/anonymization/anonymize_expedia.py  
-
-Bronze files will be generated in data/bronze/
-
----
-
-## Roadmap
-
-[x] Bronze Layer (Anonymization & Standardization)  
-[ ] Bronze Data Quality Checks  
-[ ] Silver Unified Schema  
-[ ] Gold Business Metrics  
-[ ] SQL Layer  
-[ ] BI / Dashboard  
+- Schema unification across heterogeneous sources
+- Business rule normalization
+- Automated data validation
+- Modular transformation design
+- Layered architecture (Raw → Bronze → Silver → Gold)
+- Centralized orchestration
+- Defensive data engineering
 
 ---
 
-## Project Goal
+# Future Improvements
 
-This repository demonstrates practical Data Engineering concepts applied to a hospitality business context, simulating a real-world data platform design from ingestion to analytics-ready datasets.
+- Incremental data loading
+- Docker containerization
+- Structured logging
+- Unit testing with pytest
+- Cloud deployment (AWS / Azure)
+- Dashboard layer (Power BI / Tableau)
+- Automated quality reporting
+
+---
+
+# Author
+
+Francisco Cunha  
+Data Engineering Track  
+Hospitality Analytics & Revenue Intelligence
