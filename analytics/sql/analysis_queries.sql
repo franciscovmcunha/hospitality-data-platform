@@ -4,7 +4,7 @@
 -- Purpose: Demonstrate warehouse-level analytics using SQL
 
 SELECT source, 
-SUM(price) AS total_revenue
+SUM(price) AS revenue
 FROM silver.bookings
 WHERE status = 'OK'
 GROUP BY source;
@@ -16,7 +16,7 @@ ROUND((total_cancelled * 100.0) / total_bookings,2) AS cancellation_rate
 FROM (
 SELECT source,
 COUNT(*) FILTER(WHERE status = 'Cancelled') AS total_cancelled,
-COUNT(status) AS total_bookings
+COUNT(*) AS total_bookings
 FROM silver.bookings
 GROUP BY source
 ) t
@@ -67,7 +67,7 @@ COALESCE(booker_country, 'Expedia Unknown') as country,
 ROUND(SUM(price),2) as revenue
 FROM silver.bookings
 WHERE status = 'OK'
-GROUP BY booker_country
+GROUP BY country
 ORDER BY revenue DESC
 
 
